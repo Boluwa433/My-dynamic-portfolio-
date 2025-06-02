@@ -20,4 +20,49 @@ skillButtons.forEach(button => {
   });
 });
 
-// Task 3:
+// Task 3: Dark Mode Toggle
+const themeToggleBtn = document.getElementById('themeToggle');
+const body = document.body;
+
+themeToggleBtn.addEventListener('click', () => {
+  body.classList.toggle('dark-mode');
+  if (body.classList.contains('dark-mode')) {
+    localStorage.setItem('theme', 'dark');
+  } else {
+    localStorage.setItem('theme', 'light');
+  }
+});
+
+// Apply saved theme on load
+window.addEventListener('load', () => {
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark-mode');
+  }
+});
+
+// Task 4: Load Projects from JSON
+const projectsContainer = document.getElementById('projects-container');
+
+async function loadProjects() {
+  try {
+    const response = await fetch('data/portfolio_items.json');
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    const projects = await response.json();
+
+    projects.forEach(project => {
+      const card = document.createElement('div');
+      card.classList.add('project-card');
+      card.innerHTML = `
+        <h3>${project.name}</h3>
+        <p>${project.description}</p>
+        <a href="${project.link}" target="_blank">View Project</a>
+      `;
+      projectsContainer.appendChild(card);
+    });
+  } catch (err) {
+    console.error('Error loading projects:', err);
+    projectsContainer.innerHTML = '<p>Could not load projects. Try again later.</p>';
+  }
+}
+
+loadProjects();
